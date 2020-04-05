@@ -92,6 +92,16 @@ func printInts(a []int64) {
 	}
 }
 
+func printAliases(cmd *cobra.Command) {
+	rootName := cmd.Parent().Name()
+	for _, c := range cmd.Parent().Commands() {
+		name := c.Name()
+		if name != "help" && name != "alias" {
+			fmt.Printf("alias %s='%s %s'\n", name, rootName, name)
+		}
+	}
+}
+
 var (
 	numPerLine = !isatty.IsTerminal(os.Stdout.Fd())
 )
@@ -154,6 +164,13 @@ func main() {
 					a = lcm(a, b)
 				}
 				fmt.Println(a)
+			},
+		},
+		&cobra.Command{
+			Use:   "alias",
+			Short: "Print aliases for bash/zsh",
+			Run: func(cmd *cobra.Command, args []string) {
+				printAliases(cmd)
 			},
 		},
 	)
