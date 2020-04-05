@@ -64,8 +64,27 @@ func gcd(a, b int64) int64 {
 	return gcd(b, a%b)
 }
 
+func gcdAll(a []int64) int64 {
+	r := a[0]
+	for i := 1; i < len(a); i++ {
+		r = gcd(r, a[i])
+		if r == 1 {
+			break
+		}
+	}
+	return r
+}
+
 func lcm(a, b int64) int64 {
 	return a / gcd(a, b) * b
+}
+
+func lcmAll(a []int64) int64 {
+	r := int64(1)
+	for i := 0; i < len(a); i++ {
+		r = lcm(r, a[i])
+	}
+	return r
 }
 
 type sortBy []int64
@@ -80,6 +99,14 @@ func parseInt(s string) int64 {
 		fmt.Fprintf(os.Stderr, "%v\n", err)
 	}
 	return n
+}
+
+func parseInts(args []string) []int64 {
+	a := []int64{}
+	for _, s := range args {
+		a = append(a, parseInt(s))
+	}
+	return a
 }
 
 func printInts(a []int64) {
@@ -142,15 +169,8 @@ func main() {
 			Short: "Print GCD of numbers",
 			Args:  cobra.MinimumNArgs(2),
 			Run: func(cmd *cobra.Command, args []string) {
-				a := parseInt(args[0])
-				for i := 1; i < len(args); i++ {
-					b := parseInt(args[i])
-					a = gcd(a, b)
-					if a == 1 {
-						break
-					}
-				}
-				fmt.Println(a)
+				a := parseInts(args)
+				fmt.Println(gcdAll(a))
 			},
 		},
 		&cobra.Command{
@@ -158,12 +178,8 @@ func main() {
 			Short: "Print LCM of numbers",
 			Args:  cobra.MinimumNArgs(2),
 			Run: func(cmd *cobra.Command, args []string) {
-				a := int64(1)
-				for i := 0; i < len(args); i++ {
-					b := parseInt(args[i])
-					a = lcm(a, b)
-				}
-				fmt.Println(a)
+				a := parseInts(args)
+				fmt.Println(lcmAll(a))
 			},
 		},
 		&cobra.Command{
